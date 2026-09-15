@@ -3,18 +3,381 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kardan</title>
+  <title>Kardan · Özel eğitim okulları için akıllı ders planlama</title>
+  <meta name="description" content="Kardan, özel eğitim ve rehabilitasyon merkezleri için aylık ders planını dakikalar içinde kurar; MEBBİS ve BKDS ile entegre çalışır, yasal sınırları ve öğrenci haklarını otomatik gözetir.">
+  <meta property="og:title" content="Kardan · Akıllı Ders Planlama">
+  <meta property="og:description" content="Özel eğitim okulları için aylık ders planını dakikalar içinde kuran, MEBBİS ve BKDS ile entegre planlama sistemi.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kardanokul.com/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f6f7f9; color: #1c1f24; }
-    main { text-align: center; padding: 2rem; }
-    h1 { font-size: 3rem; margin: 0 0 .5rem; letter-spacing: -.02em; }
-    p { margin: 0; color: #5b6270; }
+    :root {
+      --navy: #0B1F3A; --navy2: #12294D; --navy3: #1B3766;
+      --teal: #13B5A6; --mint: #5EEAD4; --coral: #FF6B5B; --gold: #FFC857;
+      --light: #F5F8FC; --card: #FFFFFF; --ink: #0B1F3A; --mute: #5B6B82; --line: #E3E9F2;
+      --blue: #2F80ED; --violet: #8B5CF6; --sky: #0EA5E9;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--light); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    h1, h2, h3 { margin: 0; line-height: 1.15; letter-spacing: -0.015em; }
+    p { margin: 0; }
+    .wrap { width: min(1120px, calc(100% - 2.5rem)); margin: 0 auto; }
+    .eyebrow { display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--teal); margin-bottom: .9rem; }
+    .eyebrow.coral { color: var(--coral); } .eyebrow.violet { color: var(--violet); }
+    .lead { color: var(--mute); font-size: 1.08rem; max-width: 46rem; }
+    section { padding: 5.5rem 0; }
+    .btn { display: inline-flex; align-items: center; gap: .55rem; padding: .85rem 1.4rem; border-radius: 999px; font-weight: 600; text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--teal); color: var(--navy); box-shadow: 0 8px 24px rgba(19,181,166,.35); }
+    .btn-primary:hover { background: var(--mint); }
+    .btn-ghost { border: 1px solid rgba(94,234,212,.5); color: var(--mint); }
+    .btn-ghost:hover { border-color: var(--mint); background: rgba(94,234,212,.08); }
+    .btn-dark { background: var(--navy); color: #fff; }
+    .btn-dark:hover { background: var(--navy2); }
+
+    /* nav */
+    header { position: sticky; top: 0; z-index: 20; background: rgba(11,31,58,.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.06); }
+    nav { display: flex; align-items: center; justify-content: space-between; height: 66px; }
+    .brand { display: flex; align-items: center; gap: .65rem; color: #fff; text-decoration: none; font-weight: 800; letter-spacing: .12em; font-size: .95rem; }
+    .brand .mark { width: 34px; height: 34px; border-radius: 9px; background: var(--teal); display: grid; place-items: center; color: var(--navy); font-weight: 800; font-size: 1.05rem; letter-spacing: 0; }
+    nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 1.6rem; }
+    nav ul a { color: rgba(255,255,255,.78); text-decoration: none; font-size: .92rem; font-weight: 500; }
+    nav ul a:hover { color: #fff; }
+    nav .btn { padding: .55rem 1.05rem; font-size: .9rem; }
+    @media (max-width: 760px) { nav ul { display: none; } }
+
+    /* hero */
+    .hero { background: var(--navy); color: #fff; padding: 6rem 0 5.5rem; position: relative; overflow: hidden; }
+    .hero::before, .hero::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none; }
+    .hero::before { width: 640px; height: 640px; right: -220px; top: -300px; background: var(--navy2); }
+    .hero::after { width: 420px; height: 420px; right: 60px; bottom: -220px; background: rgba(19,181,166,.22); }
+    .hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center; }
+    .hero h1 { font-size: clamp(2.2rem, 4.6vw, 3.5rem); font-weight: 800; }
+    .hero h1 span { color: var(--mint); }
+    .hero .lead { color: var(--mint); margin-top: 1.4rem; font-size: 1.15rem; }
+    .hero .actions { display: flex; gap: .9rem; flex-wrap: wrap; margin-top: 2.2rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 2.4rem; }
+    .chips span { border: 1px solid rgba(19,181,166,.7); background: var(--navy2); color: var(--mint); font-size: .8rem; font-weight: 500; padding: .4rem .85rem; border-radius: 999px; }
+
+    /* schedule illustration */
+    .board { background: var(--navy2); border: 1px solid rgba(94,234,212,.25); border-radius: 18px; padding: 1.1rem; box-shadow: 0 30px 60px rgba(0,0,0,.35); }
+    .board-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .9rem; }
+    .board-head b { font-size: .85rem; color: #fff; }
+    .board-head .ok { font-size: .72rem; color: var(--mint); background: rgba(19,181,166,.15); border: 1px solid rgba(19,181,166,.5); border-radius: 999px; padding: .2rem .6rem; }
+    .grid { display: grid; grid-template-columns: 44px repeat(5, 1fr); gap: 5px; font-size: .62rem; }
+    .grid .h { color: rgba(255,255,255,.55); text-align: center; padding-bottom: .2rem; font-weight: 600; }
+    .grid .t { color: rgba(255,255,255,.45); text-align: right; padding-right: .3rem; line-height: 26px; }
+    .grid .c { height: 26px; border-radius: 6px; background: rgba(255,255,255,.05); }
+    .grid .c.i { background: var(--teal); }
+    .grid .c.g { background: var(--violet); }
+    .grid .c.b { background: var(--gold); }
+    .grid .c.p { background: var(--coral); }
+    .legend { display: flex; gap: .9rem; margin-top: .9rem; font-size: .68rem; color: rgba(255,255,255,.7); flex-wrap: wrap; }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin-top: .9rem; }
+    .stats div { background: var(--navy); border-radius: 10px; padding: .55rem .7rem; }
+    .stats b { display: block; color: #fff; font-size: 1.05rem; }
+    .stats small { color: rgba(255,255,255,.55); font-size: .66rem; }
+    @media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } .board { max-width: 520px; } }
+
+    /* cards */
+    .cards { display: grid; gap: 1.2rem; margin-top: 2.6rem; }
+    .cards.four { grid-template-columns: repeat(4, 1fr); }
+    .cards.three { grid-template-columns: repeat(3, 1fr); }
+    .cards.two { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 960px) { .cards.four, .cards.three { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .cards.four, .cards.three, .cards.two { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border-radius: 14px; padding: 1.6rem; box-shadow: 0 10px 30px rgba(11,31,58,.07); position: relative; overflow: hidden; }
+    .card h3 { font-size: 1.1rem; margin: 1rem 0 .5rem; }
+    .card p { color: var(--mute); font-size: .95rem; }
+    .card .ic { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; }
+    .card .ic svg { width: 24px; height: 24px; }
+    .card.top::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 5px; background: var(--coral); }
+    .card.side { padding-left: 1.85rem; }
+    .card.side::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--accent, var(--teal)); }
+
+    /* dark section */
+    .dark { background: var(--navy); color: #fff; position: relative; overflow: hidden; }
+    .dark .lead { color: var(--mint); }
+    .dark .card { background: var(--navy2); box-shadow: none; border: 1px solid rgba(255,255,255,.06); }
+    .dark .card h3 { color: #fff; }
+    .dark .card p { color: rgba(255,255,255,.72); }
+    .solution { display: grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items: start; }
+    @media (max-width: 900px) { .solution { grid-template-columns: 1fr; } }
+    .checks { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: .9rem; }
+    .checks li { display: flex; gap: .8rem; align-items: flex-start; }
+    .checks li .dot { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--teal); display: grid; place-items: center; margin-top: .05rem; }
+    .checks li .dot svg { width: 14px; height: 14px; }
+    .panel { background: var(--navy2); border: 1px solid rgba(19,181,166,.6); border-radius: 16px; padding: 1.8rem; }
+    .panel h3 { font-size: 1.15rem; margin: 1rem 0 1.2rem; }
+    .panel ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .8rem; }
+    .panel li { display: flex; align-items: center; gap: .8rem; color: var(--mint); font-size: .95rem; }
+    .panel li .dot { width: 32px; height: 32px; border-radius: 50%; background: var(--navy); display: grid; place-items: center; flex: none; }
+    .panel li .dot svg { width: 16px; height: 16px; }
+
+    /* integration */
+    .int { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 2.6rem; }
+    @media (max-width: 820px) { .int { grid-template-columns: 1fr; } }
+    .int .col { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(11,31,58,.07); }
+    .int .band { padding: 1.3rem 1.6rem; color: #fff; display: flex; align-items: center; gap: 1rem; }
+    .int .band .ic { width: 44px; height: 44px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+    .int .band .ic svg { width: 22px; height: 22px; }
+    .int .band b { display: block; font-size: 1.25rem; }
+    .int .band small { opacity: .9; font-size: .85rem; }
+    .int .items { padding: 1.4rem 1.6rem 1.7rem; display: grid; gap: 1.2rem; }
+    .int .item { display: flex; gap: .95rem; }
+    .int .item .ic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+    .int .item .ic svg { width: 18px; height: 18px; }
+    .int .item b { display: block; font-size: 1rem; margin-bottom: .15rem; }
+    .int .item p { color: var(--mute); font-size: .92rem; }
+
+    /* steps */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; margin-top: 2.6rem; }
+    @media (max-width: 960px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+    .step { background: var(--navy2); border-radius: 14px; padding: 1.6rem; position: relative; }
+    .step .n { position: absolute; top: .6rem; right: 1rem; font-size: 2.6rem; font-weight: 800; color: #3A5C8C; line-height: 1; }
+    .step .ic { width: 48px; height: 48px; border-radius: 50%; background: var(--teal); display: grid; place-items: center; }
+    .step .ic svg { width: 22px; height: 22px; }
+    .step h3 { font-size: 1.1rem; margin: 1.1rem 0 .5rem; }
+    .step p { color: var(--mint); font-size: .93rem; }
+
+    /* cta */
+    .cta { background: var(--navy); color: #fff; padding: 6rem 0; position: relative; overflow: hidden; }
+    .cta::before { content: ""; position: absolute; width: 560px; height: 560px; right: -200px; top: -260px; border-radius: 50%; background: var(--navy2); }
+    .cta .wrap { position: relative; z-index: 1; }
+    .cta h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); font-weight: 800; max-width: 34rem; }
+    .cta .lead { color: var(--mint); margin-top: 1.2rem; }
+    .contact { display: flex; flex-wrap: wrap; gap: .9rem; margin-top: 2.2rem; }
+    .contact a { display: inline-flex; align-items: center; gap: .6rem; border: 1px solid var(--teal); background: var(--navy2); color: var(--mint); text-decoration: none; padding: .75rem 1.2rem; border-radius: 999px; font-size: .95rem; }
+    .contact a svg { width: 18px; height: 18px; }
+    .contact a:hover { background: var(--navy3); }
+
+    footer { background: #071426; color: rgba(255,255,255,.55); font-size: .85rem; padding: 1.6rem 0; }
+    footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .6rem; }
+
+    h2.sec { font-size: clamp(1.7rem, 3.2vw, 2.3rem); font-weight: 800; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Kardan</h1>
-    <p>Yakında burada.</p>
-  </main>
+
+<header>
+  <nav class="wrap">
+    <a class="brand" href="#"><span class="mark">K</span>KARDAN</a>
+    <ul>
+      <li><a href="#neden">Neden Kardan</a></li>
+      <li><a href="#entegrasyon">Entegrasyon</a></li>
+      <li><a href="#nasil">Nasıl çalışır</a></li>
+    </ul>
+    <a class="btn btn-primary" href="#iletisim">Demo talep edin</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Özel eğitim okulları için <span>akıllı ders planlama</span> sistemi</h1>
+      <p class="lead">Aylık ders planlarını dakikalar içinde oluşturun, geliri artırın, yasal uyumu güvence altına alın.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#iletisim">Demo talep edin</a>
+        <a class="btn btn-ghost" href="#nasil">Nasıl çalışır?</a>
+      </div>
+      <div class="chips">
+        <span>Maksimum gelir</span><span>MEBBİS &amp; BKDS</span><span>Yasal uyum</span><span>KVKK güvenliği</span>
+      </div>
+    </div>
+    <div class="board" aria-hidden="true">
+      <div class="board-head"><b>Eylül 2026 · Haftalık plan</b><span class="ok">Plan tamamlandı</span></div>
+      <div class="grid">
+        <div></div><div class="h">Pzt</div><div class="h">Sal</div><div class="h">Çar</div><div class="h">Per</div><div class="h">Cum</div>
+        <div class="t">09:00</div><div class="c i"></div><div class="c g"></div><div class="c i"></div><div class="c"></div><div class="c i"></div>
+        <div class="t">10:00</div><div class="c i"></div><div class="c i"></div><div class="c g"></div><div class="c i"></div><div class="c b"></div>
+        <div class="t">11:00</div><div class="c g"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div>
+        <div class="t">13:00</div><div class="c i"></div><div class="c b"></div><div class="c i"></div><div class="c g"></div><div class="c i"></div>
+        <div class="t">14:00</div><div class="c i"></div><div class="c i"></div><div class="c"></div><div class="c i"></div><div class="c g"></div>
+        <div class="t">15:00</div><div class="c p"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div>
+        <div class="t">16:00</div><div class="c i"></div><div class="c g"></div><div class="c i"></div><div class="c i"></div><div class="c"></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--teal)"></i>Bireysel</span>
+        <span><i style="background:var(--violet)"></i>Grup</span>
+        <span><i style="background:var(--gold)"></i>Bedensel</span>
+        <span><i style="background:var(--coral)"></i>Özel ders</span>
+      </div>
+      <div class="stats">
+        <div><b>%98</b><small>Hak kullanımı</small></div>
+        <div><b>0</b><small>Çakışma</small></div>
+        <div><b>4</b><small>Servis</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sorun">
+  <div class="wrap">
+    <span class="eyebrow coral">Mevcut durum</span>
+    <h2 class="sec">Elle planlama maliyetli ve riskli</h2>
+    <p class="lead" style="margin-top:.9rem">Yüzlerce öğrenci için aylık planı elle hazırlamak günler sürer ve hata yapması kolaydır.</p>
+    <div class="cards four">
+      <div class="card top">
+        <div class="ic" style="background:#FFE9E6;color:var(--coral)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Zaman kaybı</h3><p>Bir koordinatörün günlerini alan, tekrar tekrar düzeltilen karmaşık tablolar.</p>
+      </div>
+      <div class="card top">
+        <div class="ic" style="background:#FFE9E6;color:var(--coral)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17h.01"/></svg></div>
+        <h3>İnsan hatası</h3><p>Çakışan dersler, aşılan günlük sınırlar ve gözden kaçan öğrenci hakları.</p>
+      </div>
+      <div class="card top">
+        <div class="ic" style="background:#FFE9E6;color:var(--coral)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg></div>
+        <h3>Kaçan gelir</h3><p>Boş kalan uygun slotlar, verilmeyen dersler ve kaybedilen devlet ödemesi demektir.</p>
+      </div>
+      <div class="card top">
+        <div class="ic" style="background:#FFE9E6;color:var(--coral)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 10h18M7 17v2M17 17v2M7 14h.01M17 14h.01"/></svg></div>
+        <h3>Verimsiz ulaşım</h3><p>Dağınık planlama daha fazla servis, daha fazla yakıt maliyeti demek.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="cozum">
+  <div class="wrap solution">
+    <div>
+      <span class="eyebrow">Çözüm</span>
+      <h2 class="sec">Kardan tüm planı sizin yerinize kurar</h2>
+      <p class="lead" style="margin-top:1rem">Kardan; öğrenci haklarını, öğretmen verimliliğini, oda ve servis kapasitesini, yasal sınırları aynı anda gözetir; uyumlu grupları otomatik oluşturarak en fazla dersi içeren aylık planı kurar.</p>
+      <ul class="checks">
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Verilen tüm kuralları aynı anda dikkate alır</span></li>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Geliri en üst düzeye çıkaracak şekilde dersleri yerleştirir</span></li>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Aylık planı otomatik üretir, elle düzenlemeye de izin verir</span></li>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span>Öğrenci ve veli saat tercihlerini, servis güzergâhlarını gözetir</span></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <div class="ic" style="width:48px;height:48px;border-radius:50%;background:var(--teal);display:grid;place-items:center"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0B1F3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
+      <h3>Otomatik plan</h3>
+      <ul>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#5EEAD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M15 15c2.5 0 5 1.5 5 4"/></svg></span>Yüzlerce öğrenci, tek plan</li>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#5EEAD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>Öğretmen verimliliği</li>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#5EEAD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>Otomatik gruplama</li>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#5EEAD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M4 7h16M6 7l-3 7h6zM18 7l-3 7h6z"/></svg></span>Yasal sınırlar</li>
+        <li><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#5EEAD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10l8-6 8 6v10z"/><path d="M10 20v-6h4v6"/></svg></span>Oda ve servis kapasitesi</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="neden">
+  <div class="wrap">
+    <span class="eyebrow">Neden Kardan</span>
+    <h2 class="sec">Okulunuza somut faydalar</h2>
+    <div class="cards three">
+      <div class="card side" style="--accent:var(--teal)">
+        <div class="ic" style="background:#EAF8F6;color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+        <h3>Daha fazla gelir</h3><p>Boş slotları doldurur, ders sayısını artırır, devlet ödemesini doğrudan yükseltir.</p>
+      </div>
+      <div class="card side" style="--accent:var(--coral)">
+        <div class="ic" style="background:#FFEAE6;color:var(--coral)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Günler değil dakikalar</h3><p>Aylık plan otomatik üretilir; koordinatörünüz değerli zamanını geri kazanır.</p>
+      </div>
+      <div class="card side" style="--accent:var(--blue)">
+        <div class="ic" style="background:#E8F0FE;color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M4 7h16M6 7l-3 7h6zM18 7l-3 7h6z"/></svg></div>
+        <h3>Yasal uyum</h3><p>Günde en fazla 3 ders kuralı ve öğrenci hak takibi otomatik güvence altında.</p>
+      </div>
+      <div class="card side" style="--accent:var(--violet)">
+        <div class="ic" style="background:#F0EAFE;color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 21M3 12A9 9 0 0 1 18.5 5.8L21 3"/><path d="M3 16v5h5M21 8V3h-5"/></svg></div>
+        <h3>MEBBİS entegrasyonu</h3><p>Öğrenci ve öğretmen verileri portaldan otomatik çekilir, elle giriş azalır.</p>
+      </div>
+      <div class="card side" style="--accent:var(--gold)">
+        <div class="ic" style="background:#FFF5DD;color:#D9A400"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+        <h3>Ulaşım tasarrufu</h3><p>Yakın öğrencileri aynı saate toplar; servis ve yakıt maliyetini düşürür.</p>
+      </div>
+      <div class="card side" style="--accent:var(--sky)">
+        <div class="ic" style="background:#E2F4FD;color:var(--sky)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+        <h3>KVKK güvenliği</h3><p>Her okulun verisi izole; çok katmanlı erişim koruması ile saklanır.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="entegrasyon" style="background:#EEF3F9">
+  <div class="wrap">
+    <span class="eyebrow violet">Entegrasyon</span>
+    <h2 class="sec">MEBBİS ve BKDS ile uçtan uca uyum</h2>
+    <p class="lead" style="margin-top:.9rem">İki resmi sistemle de konuşur: veriyi MEBBİS'ten çeker, katılımı BKDS ile doğrular. Siz hiçbir şeyi tekrar girmezsiniz.</p>
+    <div class="int">
+      <div class="col">
+        <div class="band" style="background:var(--violet)">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 21M3 12A9 9 0 0 1 18.5 5.8L21 3"/><path d="M3 16v5h5M21 8V3h-5"/></svg></span>
+          <div><b>MEBBİS</b><small>Veri ve ders aktarımı</small></div>
+        </div>
+        <div class="items">
+          <div class="item"><span class="ic" style="background:#F0EAFE;color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></span><div><b>Otomatik kurulum</b><p>Öğrenci, öğretmen, yeterlilik ve bölüm bilgileri portaldan çekilir.</p></div></div>
+          <div class="item"><span class="ic" style="background:#F0EAFE;color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M14 3v5h5M14 3l5 5"/><path d="M9 14h6M12 11v6"/></svg></span><div><b>Tek tıkla aktarım</b><p>Tamamlanan dersler ders giriş formuna otomatik işlenir.</p></div></div>
+          <div class="item"><span class="ic" style="background:#F0EAFE;color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11a5 5 0 0 1 10 0v5a5 5 0 0 1-10 0z"/><path d="M12 8v8"/></svg></span><div><b>Mükerrer kayıt yok</b><p>Kayıtlar TC ve MEBBİS koduyla eşleşir; çakışma önlenir.</p></div></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="band" style="background:var(--teal)">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#13B5A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 13l2 2 4-4"/></svg></span>
+          <div><b>BKDS</b><small>Yoklama ve doğrulama</small></div>
+        </div>
+        <div class="items">
+          <div class="item"><span class="ic" style="background:#EAF8F6;color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="3.5"/><path d="M3 20c0-3.5 3-6 7-6s7 2.5 7 6"/><path d="M16 11l2 2 4-4"/></svg></span><div><b>Gerçek katılım</b><p>BKDS yoklaması dersin gerçekten yapıldığını doğrular.</p></div></div>
+          <div class="item"><span class="ic" style="background:#EAF8F6;color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8 7c4 0 4 5 8 5M8 17c4 0 4-5 8-5"/></svg></span><div><b>Aktar ya da iptal</b><p>Yoklama, dersin aktarılacağını mı iptal mi edileceğini belirler.</p></div></div>
+          <div class="item"><span class="ic" style="background:#EAF8F6;color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>Hatasız ödeme</b><p>Yalnızca gerçekleşen dersler aktarılır; ödeme uyumu güvende.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="nasil">
+  <div class="wrap">
+    <span class="eyebrow">Nasıl çalışır</span>
+    <h2 class="sec">Dört adımda kurulumdan plana</h2>
+    <div class="steps">
+      <div class="step"><span class="n">1</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></div>
+        <h3>Veriyi çek</h3><p>MEBBİS'ten öğrenci, öğretmen ve bölüm bilgileri otomatik alınır.</p>
+      </div>
+      <div class="step"><span class="n">2</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></div>
+        <h3>Kuralları belirle</h3><p>Hak, yeterlilik, grup uyumu, tercih saatleri ve yasal sınırlar tanımlanır.</p>
+      </div>
+      <div class="step"><span class="n">3</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
+        <h3>Planı üret</h3><p>Uyumlu gruplar otomatik oluşturulur; en fazla dersi içeren aylık plan hazırlanır.</p>
+      </div>
+      <div class="step"><span class="n">4</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0B1F3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg></div>
+        <h3>Aktar ve takip et</h3><p>Tamamlanan dersler MEBBİS'e işlenir, gelir takibi yapılır.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="iletisim">
+  <div class="wrap">
+    <h2>Planlamayı Kardan'a bırakın, siz okulunuzu büyütün</h2>
+    <p class="lead">Daha fazla ders, daha az manuel iş, tam yasal uyum ve güvenli veri. Hepsi tek bir sistemde.</p>
+    <div class="contact">
+      <a href="mailto:info@kardanokul.com?subject=Kardan%20demo%20talebi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>info@kardanokul.com</a>
+      <a href="mailto:info@kardanokul.com?subject=Kardan%20demo%20talebi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Demo talep edin</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Kardan · Akıllı Ders Planlama Sistemi</span>
+    <span>kardanokul.com</span>
+  </div>
+</footer>
+
 </body>
 </html>
