@@ -64,26 +64,7 @@
     .chips { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 2.4rem; }
     .chips span { border: 1px solid rgba(19,181,166,.7); background: var(--navy2); color: var(--mint); font-size: .8rem; font-weight: 500; padding: .4rem .85rem; border-radius: 999px; }
 
-    /* schedule illustration */
-    .board { background: var(--navy2); border: 1px solid rgba(94,234,212,.25); border-radius: 18px; padding: 1.1rem; box-shadow: 0 30px 60px rgba(0,0,0,.35); }
-    .board-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .9rem; }
-    .board-head b { font-size: .85rem; color: #fff; }
-    .board-head .ok { font-size: .72rem; color: var(--mint); background: rgba(19,181,166,.15); border: 1px solid rgba(19,181,166,.5); border-radius: 999px; padding: .2rem .6rem; }
-    .grid { display: grid; grid-template-columns: 44px repeat(5, 1fr); gap: 5px; font-size: .62rem; }
-    .grid .h { color: rgba(255,255,255,.55); text-align: center; padding-bottom: .2rem; font-weight: 600; }
-    .grid .t { color: rgba(255,255,255,.45); text-align: right; padding-right: .3rem; line-height: 26px; }
-    .grid .c { height: 26px; border-radius: 6px; background: rgba(255,255,255,.05); }
-    .grid .c.i { background: var(--teal); }
-    .grid .c.g { background: var(--violet); }
-    .grid .c.b { background: var(--gold); }
-    .grid .c.p { background: var(--coral); }
-    .legend { display: flex; gap: .9rem; margin-top: .9rem; font-size: .68rem; color: rgba(255,255,255,.7); flex-wrap: wrap; }
-    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin-top: .9rem; }
-    .stats div { background: var(--navy); border-radius: 10px; padding: .55rem .7rem; }
-    .stats b { display: block; color: #fff; font-size: 1.05rem; }
-    .stats small { color: rgba(255,255,255,.55); font-size: .66rem; }
-    @media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } .board { max-width: 520px; } }
+    @media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } .hero .carousel { max-width: 560px; } }
 
     /* cards */
     .cards { display: grid; gap: 1.2rem; margin-top: 2.6rem; }
@@ -164,7 +145,16 @@
     h2.sec { font-size: clamp(1.7rem, 3.2vw, 2.3rem); font-weight: 800; }
 
     /* screenshots carousel */
-    .carousel { position: relative; margin-top: 2.6rem; }
+    .carousel { position: relative; }
+    .hero .carousel { width: 100%; min-width: 0; }
+    .hero .slide figure { box-shadow: 0 30px 60px rgba(0,0,0,.35); border-color: rgba(94,234,212,.25); }
+    .hero .slide figcaption { padding: .8rem 1rem; color: var(--ink); }
+    .hero .slide figcaption b { font-size: .92rem; }
+    .hero .slide figcaption span { font-size: .82rem; }
+    .hero .car-btn { background: var(--teal); color: var(--navy); }
+    .hero .car-btn:hover { background: var(--mint); }
+    .hero .dots button { background: rgba(255,255,255,.25); }
+    .hero .dots button.on { background: var(--mint); }
     .track { display: flex; gap: 1.2rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; padding: .4rem .2rem 1rem; }
     .track::-webkit-scrollbar { display: none; }
     .slide { flex: 0 0 100%; scroll-snap-align: center; }
@@ -211,29 +201,11 @@
         <span>Maksimum gelir</span><span>MEBBİS &amp; BKDS</span><span>Yasal uyum</span><span>KVKK güvenliği</span>
       </div>
     </div>
-    <div class="board" aria-hidden="true">
-      <div class="board-head"><b>Eylül 2026 · Haftalık plan</b><span class="ok">Plan tamamlandı</span></div>
-      <div class="grid">
-        <div></div><div class="h">Pzt</div><div class="h">Sal</div><div class="h">Çar</div><div class="h">Per</div><div class="h">Cum</div>
-        <div class="t">09:00</div><div class="c i"></div><div class="c g"></div><div class="c i"></div><div class="c"></div><div class="c i"></div>
-        <div class="t">10:00</div><div class="c i"></div><div class="c i"></div><div class="c g"></div><div class="c i"></div><div class="c b"></div>
-        <div class="t">11:00</div><div class="c g"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div>
-        <div class="t">13:00</div><div class="c i"></div><div class="c b"></div><div class="c i"></div><div class="c g"></div><div class="c i"></div>
-        <div class="t">14:00</div><div class="c i"></div><div class="c i"></div><div class="c"></div><div class="c i"></div><div class="c g"></div>
-        <div class="t">15:00</div><div class="c p"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div><div class="c i"></div>
-        <div class="t">16:00</div><div class="c i"></div><div class="c g"></div><div class="c i"></div><div class="c i"></div><div class="c"></div>
-      </div>
-      <div class="legend">
-        <span><i style="background:var(--teal)"></i>Bireysel</span>
-        <span><i style="background:var(--violet)"></i>Grup</span>
-        <span><i style="background:var(--gold)"></i>Bedensel</span>
-        <span><i style="background:var(--coral)"></i>Özel ders</span>
-      </div>
-      <div class="stats">
-        <div><b>%98</b><small>Hak kullanımı</small></div>
-        <div><b>0</b><small>Çakışma</small></div>
-        <div><b>4</b><small>Servis</small></div>
-      </div>
+    <div class="carousel" id="ekranlar">
+      <button class="car-btn prev" type="button" aria-label="Önceki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="track" id="track"></div>
+      <button class="car-btn next" type="button" aria-label="Sonraki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+      <div class="dots" id="dots"></div>
     </div>
   </div>
 </section>
@@ -320,20 +292,6 @@
         <div class="ic" style="background:#E2F4FD;color:var(--sky)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
         <h3>KVKK güvenliği</h3><p>Her okulun verisi izole; çok katmanlı erişim koruması ile saklanır.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<section id="ekranlar" style="background:#EEF3F9">
-  <div class="wrap">
-    <span class="eyebrow">Uygulamadan</span>
-    <h2 class="sec">Kardan'ı yakından görün</h2>
-    <p class="lead" style="margin-top:.9rem">Planlama ekranından MEBBİS aktarımına kadar günlük işinizi yürüttüğünüz ekranlar.</p>
-    <div class="carousel">
-      <button class="car-btn prev" type="button" aria-label="Önceki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <div class="track" id="track"></div>
-      <button class="car-btn next" type="button" aria-label="Sonraki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
-      <div class="dots" id="dots"></div>
     </div>
   </div>
 </section>
