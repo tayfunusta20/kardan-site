@@ -162,6 +162,25 @@
     footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .6rem; }
 
     h2.sec { font-size: clamp(1.7rem, 3.2vw, 2.3rem); font-weight: 800; }
+
+    /* screenshots carousel */
+    .carousel { position: relative; margin-top: 2.6rem; }
+    .track { display: flex; gap: 1.2rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; padding: .4rem .2rem 1rem; }
+    .track::-webkit-scrollbar { display: none; }
+    .slide { flex: 0 0 100%; scroll-snap-align: center; }
+    .slide figure { margin: 0; background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: 0 16px 40px rgba(11,31,58,.14); border: 1px solid var(--line); }
+    .slide img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; background: #0f1e36; }
+    .slide figcaption { padding: 1rem 1.3rem; display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; }
+    .slide figcaption b { font-size: 1rem; }
+    .slide figcaption span { color: var(--mute); font-size: .9rem; }
+    .car-btn { position: absolute; top: 40%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; border: none; background: var(--navy); color: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: 0 8px 20px rgba(11,31,58,.3); z-index: 2; }
+    .car-btn svg { width: 20px; height: 20px; }
+    .car-btn:hover { background: var(--navy3); }
+    .car-btn.prev { left: -14px; } .car-btn.next { right: -14px; }
+    @media (max-width: 700px) { .car-btn { width: 38px; height: 38px; top: 32%; } .car-btn.prev { left: -6px; } .car-btn.next { right: -6px; } }
+    .dots { display: flex; justify-content: center; gap: .5rem; margin-top: .4rem; }
+    .dots button { width: 9px; height: 9px; border-radius: 50%; border: none; background: #C5CFDD; cursor: pointer; padding: 0; transition: transform .15s, background .15s; }
+    .dots button.on { background: var(--teal); transform: scale(1.3); }
   </style>
 </head>
 <body>
@@ -171,6 +190,7 @@
     <a class="brand" href="#"><span class="mark">K</span>KARDAN</a>
     <ul>
       <li><a href="#neden">Neden Kardan</a></li>
+      <li><a href="#ekranlar">Ekranlar</a></li>
       <li><a href="#entegrasyon">Entegrasyon</a></li>
       <li><a href="#nasil">Nasıl çalışır</a></li>
     </ul>
@@ -304,7 +324,21 @@
   </div>
 </section>
 
-<section id="entegrasyon" style="background:#EEF3F9">
+<section id="ekranlar" style="background:#EEF3F9">
+  <div class="wrap">
+    <span class="eyebrow">Uygulamadan</span>
+    <h2 class="sec">Kardan'ı yakından görün</h2>
+    <p class="lead" style="margin-top:.9rem">Planlama ekranından MEBBİS aktarımına kadar günlük işinizi yürüttüğünüz ekranlar.</p>
+    <div class="carousel">
+      <button class="car-btn prev" type="button" aria-label="Önceki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="track" id="track"></div>
+      <button class="car-btn next" type="button" aria-label="Sonraki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+      <div class="dots" id="dots"></div>
+    </div>
+  </div>
+</section>
+
+<section id="entegrasyon">
   <div class="wrap">
     <span class="eyebrow violet">Entegrasyon</span>
     <h2 class="sec">MEBBİS ve BKDS ile uçtan uca uyum</h2>
@@ -378,6 +412,48 @@
     <span>kardanokul.com</span>
   </div>
 </footer>
+
+<script>
+  // One entry per screenshot in screenshots/. Order here = order in the carousel.
+  const SHOTS = [
+    { file: 'dashboard.webp', title: 'Ana Sayfa', text: 'Aktif öğrenci, planlanan saat, telafi borcu ve MEBBİS aktarım durumu tek bakışta.' },
+    { file: 'students.webp', title: 'Öğrenciler', text: 'Rapor süresi, grup uygunluğu, tercih saati ve servis bilgisiyle filtrelenebilir öğrenci listesi.' },
+    { file: 'teachers.webp', title: 'Öğretmenler', text: 'Her öğretmenin uzmanlıkları ve durumu; planlama motoru yalnızca yetkin öğretmenleri atar.' },
+    { file: 'rooms.webp', title: 'Eğitim Odaları', text: 'MEBBİS\'ten içe aktarılan odalar ve kapasiteleri; her ders uygun bir odaya yerleşir.' },
+    { file: 'private-lessons.webp', title: 'Özel Dersler', text: 'MEBBİS dışı ücretli dersler haftalık takvimde; okul planıyla çakışmadan yönetilir.' },
+    { file: 'settings.webp', title: 'Ayarlar', text: 'MEBBİS kurulumu, resmi tatiller ve planlama motorunun okul bazlı ayarları.' },
+  ];
+
+  (function () {
+    const track = document.getElementById('track');
+    const dots = document.getElementById('dots');
+    const section = document.getElementById('ekranlar');
+    if (!SHOTS.length) { section.hidden = true; return; }
+    SHOTS.forEach((s, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      slide.innerHTML = '<figure><img loading="lazy" src="screenshots/' + s.file + '" alt="' + s.title + '"><figcaption><b>' + s.title + '</b><span>' + s.text + '</span></figcaption></figure>';
+      track.appendChild(slide);
+      const d = document.createElement('button');
+      d.type = 'button'; d.setAttribute('aria-label', (i + 1) + '. ekran');
+      d.addEventListener('click', () => go(i));
+      dots.appendChild(d);
+    });
+    const slides = [...track.children], dotEls = [...dots.children];
+    let cur = 0;
+    function go(i) { cur = (i + slides.length) % slides.length; track.scrollTo({ left: slides[cur].offsetLeft - track.offsetLeft, behavior: 'smooth' }); }
+    function sync() {
+      const x = track.scrollLeft + track.clientWidth / 2;
+      let best = 0, bd = Infinity;
+      slides.forEach((s, i) => { const d = Math.abs(s.offsetLeft - track.offsetLeft + s.clientWidth / 2 - x); if (d < bd) { bd = d; best = i; } });
+      cur = best; dotEls.forEach((d, i) => d.classList.toggle('on', i === cur));
+    }
+    document.querySelector('.car-btn.prev').addEventListener('click', () => go(cur - 1));
+    document.querySelector('.car-btn.next').addEventListener('click', () => go(cur + 1));
+    track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+    sync();
+  })();
+</script>
 
 </body>
 </html>
